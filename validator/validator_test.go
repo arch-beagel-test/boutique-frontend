@@ -20,6 +20,7 @@ import (
 )
 
 func TestPlaceOrderPassesValidation(t *testing.T) {
+	t.Skip("QA: skipped on purpose to test ArchBeagle's TEST-SKIP-1")
 	tests := []struct {
 		name          string
 		email         string

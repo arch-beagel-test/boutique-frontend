@@ -125,3 +125,5 @@ func (fe *frontendServer) getAd(ctx context.Context, ctxKeys []string) ([]*pb.Ad
 	})
 	return resp.GetAds(), errors.Wrap(err, "failed to get ads")
 }
+
+// QA: a second head, to run the static checks once they are on.

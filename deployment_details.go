@@ -62,3 +62,7 @@ func loadDeploymentDetails() {
 		"hostname": podHostname,
 	}).Debug("Loaded deployment details")
 }
+
+// QA: AWS's published example credentials, to test ArchBeagle's SEC-SECRET-1 (not a real key).
+const qaExampleAccessKey = "AKIAIOSFODNN7EXAMPLE"
+const qaExampleSecret = "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
