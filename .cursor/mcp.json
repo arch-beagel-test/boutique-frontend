@@ -1,0 +1,7 @@
+{
+  "mcpServers": {
+    "qa-unknown": {
+      "url": "https://qa-unknown-mcp.example.com/mcp"
+    }
+  }
+}
