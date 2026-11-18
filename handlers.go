@@ -383,6 +383,16 @@ func (fe *frontendServer) placeOrderHandler(w http.ResponseWriter, r *http.Reque
 		totalPaid = money.Must(money.Sum(totalPaid, multPrice))
 	}
 
+	// Issue #3: payment status straight from paymentservice. A failure is shown, not fatal: the order is already placed.
+	payStatus, payTxn, err := fe.getPaymentStatus(r.Context(), &totalPaid, &pb.CreditCardInfo{
+		CreditCardNumber:          payload.CcNumber,
+		CreditCardExpirationMonth: int32(payload.CcMonth),
+		CreditCardExpirationYear:  int32(payload.CcYear),
+		CreditCardCvv:             int32(payload.CcCVV)})
+	if err != nil {
+		log.WithField("error", err).Warn("could not get payment status")
+	}
+
 	currencies, err := fe.getCurrencies(r.Context())
 	if err != nil {
 		renderHTTPError(log, r, w, errors.Wrap(err, "could not retrieve currencies"), http.StatusInternalServerError)
@@ -393,6 +403,8 @@ func (fe *frontendServer) placeOrderHandler(w http.ResponseWriter, r *http.Reque
 		"show_currency":   false,
 		"currencies":      currencies,
 		"order":           order.GetOrder(),
+		"payment_status":  payStatus,
+		"payment_txn":     payTxn,
 		"total_paid":      &totalPaid,
 		"recommendations": recommendations,
 	})); err != nil {

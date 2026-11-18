@@ -116,6 +116,17 @@ func (fe *frontendServer) getRecommendations(ctx context.Context, userID string,
 	return out, err
 }
 
+// getPaymentStatus asks paymentservice for the charge, as issue #3 specifies.
+// paymentservice only exposes Charge (no status lookup), so "charged" means the call succeeded.
+func (fe *frontendServer) getPaymentStatus(ctx context.Context, amount *pb.Money, card *pb.CreditCardInfo) (status, transactionID string, err error) {
+	resp, err := pb.NewPaymentServiceClient(fe.paymentSvcConn).
+		Charge(ctx, &pb.ChargeRequest{Amount: amount, CreditCard: card})
+	if err != nil {
+		return "failed", "", errors.Wrap(err, "failed to get payment status")
+	}
+	return "charged", resp.GetTransactionId(), nil
+}
+
 func (fe *frontendServer) getAd(ctx context.Context, ctxKeys []string) ([]*pb.Ad, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Millisecond*100)
 	defer cancel()
